@@ -4,15 +4,11 @@ accelerometer data (in another table) by healthCode
 updating datagroup labels where they were missing
 from some but not all records for this healthcode
 
-psql command to save output to file
-\o new.sql
-psql command to run a sql file
-\i new.sql
-
-this SQL auto-generates SQL to update missing healthcodes
+the SQL below auto-generates SQL to update missing healthcodes
 (included here to show how the script below was generated)
+use \o out.sql to save the SQL-fomatted output to a file.
 
-select healthcode, 'update accel_dem set datagroups = ', datagroups, ' where recordid =', recordId, ';' from accel_dem where healthcode in (select healthcode from accel_dem group by healthcode having count(recordId) > 1) order by healthcode asc;
+SELECT healthcode, 'UPDATE accel_dem SET datagroups = ', datagroups, ' WHERE recordid =', recordId, ';' FROM accel_dem WHERE healthcode IN (SELECT healthcode FROM accel_dem GROUP BY healthcode HAVING COUNT(recordId) > 1) ORDER BY healthcode ASC;
 */
 
  update accel_dem set datagroups = 'parkinson'  where recordid = '43bc5de9-2737-4973-93d5-be53d9fcefac';

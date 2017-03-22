@@ -1,3 +1,4 @@
+-- DROPPING COLUMNS
 
 -- columns to drop
 ALTER TABLE ACC_1 DROP COLUMN accel_tremor_handInLap_right_json_items;
@@ -29,7 +30,15 @@ ALTER TABLE ACC_1 DROP COLUMN usersharingscope;
 ALTER TABLE ACC_1 DROP COLUMN skiphand_json_answer;
 ALTER TABLE ACC_1 DROP COLUMN idx;
 
---
+
+-- CLEANING (not much needed since data is generated)
+
+-- there is nothing special about rangex, but successful feature
+-- calling will give it a value; if it is null here, the record should be deleted
+DELETE FROM acc_1 WHERE rangex IS NULL;
+
+
+-- DE-DUPLICATION
 
 -- this de-duplicates *recordids* from acc_1
 DELETE FROM acc_1
@@ -38,8 +47,9 @@ DELETE FROM acc_1
       (SELECT recordid FROM acc_1 GROUP BY recordid HAVING COUNT(*) > 1)
     GROUP BY recordid);
 
--- this is the check - there should be only one recordid returned
-select recordid from acc_1 where recordid = '24395276-b01c-4782-9981-d20f08432ddf';
+-- this is the check - there should be no recordids that are duplicate
+SELECT recordid, COUNT(recordid) FROM acc_1 GROUP BY recordid HAVING COUNT(recordid) > 1;
+
 
 /*
 this de-duplicates *healthcode* ids from acc_1
@@ -54,4 +64,4 @@ SELECT COUNT(DISTINCT healthcode) FROM acc_1;
 SELECT COUNT(*) FROM accel_data;
 
 -- drop the temporary import table
---DROP TABLE ACC_1;
+DROP TABLE ACC_1;

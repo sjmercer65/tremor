@@ -13,7 +13,7 @@ options:
     h - otput the processed header line of <file> to STDOUT
     t - (testing only)
 
-example: python process.tsv.py foo.tsv o > ready_for_postgres.tsv
+example: python process_tsv.py foo.tsv o > ready_for_postgres.tsv
 
 '''
 
@@ -148,7 +148,9 @@ class filereader(object):
                 if i == 0:
                     print self.output_header()
                 else:
-                    print '\t'.join(line.strip().split('\t')[:self.max_fields])
+                    fld_arr = line.strip().split('\t')
+                    if fld_arr[141] != 'no json data file':
+                        print '\t'.join(fld_arr[:self.max_fields])
 
     def output_structure(self):
         '''

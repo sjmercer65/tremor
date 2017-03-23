@@ -1,7 +1,10 @@
 '''
 notebook_funcs.py
 
-Helper functions for Jupyter notebook <name_here.ipynb>
+Helper functions for Jupyter notebook <Parkinsons.ipynb>
+
+All functions by Simon Mercer (simonm@imail.com)
+Unless otherwise acknowledged in the function header
 '''
 
 import numpy as np
@@ -23,11 +26,13 @@ from sklearn.pipeline import make_pipeline
 
 def connect(db, host='localhost', port=5432):
     '''
-    Arguments:
+    Connects to PostgreSQL database
+
+    Input:
      db - local postgresql database name
      host - machine hosting postgresql instance
      port - communication port for postgresql instance
-    Returns:
+    Output:
      postgresql connection object
 
     PostgreSQL URL format (user/pass not needed locally):
@@ -40,10 +45,19 @@ def connect(db, host='localhost', port=5432):
 
 def add_features(df):
     '''
-    Add features to the data frame
-    Input: data frame containing a gesture feature set
-    Output: none - data frame is modified in place
+    Add derived/dummy features to the data frame
+
+    Input:
+      data frame containing a gesture feature set
+    Output:
+      none - data frame is modified in place
+
+    NOTE - Unlike the other functions, this one has large sections
+    commented out as the result of experimentation with combinations
+    of parameters. I will leave these in place so users may tweak
+    the available feature set if desired.
     '''
+
     # add dummy columns for demographic categories
     #df = pd.concat([df, pd.get_dummies(df['gender'])], axis=1)
     #df = pd.concat([df, pd.get_dummies(df['medicationtime'])], axis=1)
@@ -69,11 +83,15 @@ def add_features(df):
 
 
 def get_datasets(db_connection):
-    # Build one data frame for each gesture
-    #sql_clause = 'select * from tll_final'
-    #df = pd.read_sql(sql_clause, connect('tremor'))
+    '''
+    Build one data frame for each gesture
 
+    Input:
+      database connection
+    Output:
+      list of data frame objects, one per gesture
 
+    '''
     df_tll = add_features(pd.read_sql('SELECT * FROM tll_final', db_connection))
     df_tlr = add_features(pd.read_sql('SELECT * FROM tlr_final', db_connection))
     df_tnl = add_features(pd.read_sql('SELECT * FROM tnl_final', db_connection))
@@ -84,9 +102,15 @@ def get_datasets(db_connection):
 
 
 def create_predictor_set(df, fields=''):
-    # create a set of predictors (x values) and a set of labels (y values)
+    '''
+    Creates a set of predictors (x values) and a set of labels (y values)
 
-    #best_feats = ['age','modey','medianf0fx','acfz','p0y','q3x','p0fy','tkeoz','kuraj']
+    Input:
+      df - data frame
+      fields - (optional) field mask restricting the data frame (default = all)
+    Output:
+      tuple of data frames of X vector and y labels
+    '''
 
     y_all = df['datagroups']
     X_all = df.drop('datagroups', axis=1, inplace=False)
@@ -98,6 +122,16 @@ def create_predictor_set(df, fields=''):
 
 def sff_selection(k_features, pipeline, x, y, fwd=True, flt=True):
     '''
+    Selects a subset of available features
+
+    Input:
+      k_features - number of features to select
+      pipeline - predictor pipeline
+      x, y - features and labels
+      fwd,flt - boolean parameters for SFFS algorithm, see mlxtend docs
+    Output:
+      tuple of accuracy score and list of k selected fatures
+
     The mlxtend SFS function implements four related feature selection algorithms;
     if the default parameters (fwd=True, flt=True) are not changed, this is
     Sequential Floating Forward Selection (SFFS)
@@ -134,8 +168,18 @@ def sff_selection(k_features, pipeline, x, y, fwd=True, flt=True):
 
 
 def search_features(lr_pipeline, x, y, n):
-    # explore the parameter space from 1 to n features
-    # WARNING - RUNS SLOWLY
+    '''
+    WARNING - RUNS SLOWLY
+    Explore the parameter space from 1 to n features
+    WARNING - RUNS SLOWLY
+
+    Input:
+      lr_pipeline - predictor pipeline
+      x, y - features and labels
+      n - maximum number of features to Explore
+    Output:
+      lists of number of features and accuracy scores
+    '''
     # initialize x and y lists with zeros so we have a point at the origin
     x_list=[0]
     y_list=[0]
@@ -150,12 +194,12 @@ def search_features(lr_pipeline, x, y, n):
 def find_idx (mylist, threshold):
     '''
     Returns the index of the last element in mylist where
-    mylist[i+1] is less than threhold bigger than mylist[i]
+    mylist[i+1] is less than threshold bigger than mylist[i]
 
-    inputs:
+    Input:
         mylist = list of numbers
         threshold = number
-    output:
+    Output:
         integer
     '''
     for i in range(len(mylist)-1):
@@ -165,6 +209,16 @@ def find_idx (mylist, threshold):
 
 
 def sffs_plot(x_list, y_list):
+    '''
+    Plot how cross-validation score varies with the number of
+    features used in prediction
+
+    Input:
+      x_list - integer list of number of features
+      y_list - float list of prediction accuracies
+    Output:
+      none (graph displayed in notebook)
+    '''
     plt.plot(x_list, y_list, c='blue', alpha=0.5)
     plt.xlabel("Number of features")
     plt.ylabel("Cross-validation score")
@@ -176,6 +230,17 @@ def sffs_plot(x_list, y_list):
 
 
 def roc_on(fpr, tpr, roc_auc, g_name):
+    '''
+    Plots a Receiver Operator Characteristic (ROC) curve
+
+    Input:
+      fpr - list of false positive rates
+      tpr - list of true positive rates
+      roc_auc - area under the curve
+      g_name - gesture name for title
+    Output:
+      none (graph displayed in notebook)
+    '''
     # display the ROC curve
     sns.set_style("darkgrid")
     plt.plot(fpr, tpr, color='darkorange', label='Area under curve = {}'.format('%.3f' % roc_auc))
@@ -188,17 +253,27 @@ def roc_on(fpr, tpr, roc_auc, g_name):
     plt.legend(loc="lower right")
     plt.show()
 
-def build_cfm(roc_prob, y_test, title):
-    # Builds a Confusion Matrix
-    # threshold in the binarize function can be adjusted to change classifications
-    # experimentation shows reducing threshold decreases FN rate but increases FP rate
-    # we can accept FP but not FN, so threshold is low
+def build_cfm(roc_prob, y_test):
+    '''
+    Creates data for display in a Confusion matrix
+
+    Input:
+      roc_prob - list of probabilities (floats) for each label
+      y_test - list of labels (binary)
+    Output:
+      none (passes to show_confusion_matrix, which displays in notebook)
+
+    Threshold in the binarize function can be adjusted to change
+    classifications; experimentation shows reducing threshold decreases
+    FN rate but increases FP rate - we can accept FP but not FN,
+    so threshold is low
+    '''
     X_binary = binarize(roc_prob.reshape(-1,1), threshold=0.25)
     C = confusion_matrix(y_test, X_binary)
     show_confusion_matrix(C, title, ['Control', 'Parkinsons'])
 
 
-def show_confusion_matrix(C, title, class_labels=['0','1']):
+def show_confusion_matrix(C, class_labels=['0','1']):
     """
     C: ndarray, shape (2,2) as given by scikit-learn confusion_matrix function
     class_labels: list of strings, default simply labels 0 and 1.

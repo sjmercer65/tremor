@@ -19,7 +19,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import binarize
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
-from IPython.core import display as ICD
 
 
 def connect(db, host='localhost', port=5432):
@@ -160,8 +159,6 @@ def find_idx (mylist, threshold):
         integer
     '''
     for i in range(len(mylist)-1):
-        print mylist[i] + threshold
-        print mylist[i+1]
         if (mylist[i] + threshold) > mylist[i+1]:
             return i
     return len(mylist) -1
@@ -177,7 +174,31 @@ def sffs_plot(x_list, y_list):
     plt.ylim([0.0, 1.0])
     plt.show()
 
-def show_confusion_matrix(C, class_labels=['0','1']):
+
+def roc_on(fpr, tpr, roc_auc, g_name):
+    # display the ROC curve
+    sns.set_style("darkgrid")
+    plt.plot(fpr, tpr, color='darkorange', label='Area under curve = {}'.format('%.3f' % roc_auc))
+    plt.plot([0, 1], [0, 1], color='blue', lw=1, linestyle='--')
+    plt.xlabel("False Positive Rate (1 - Specificity)")
+    plt.ylabel("True Positive Rate (Sensitivity, Recall)")
+    plt.title("ROC curve for gesture {}".format(g_name))
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.legend(loc="lower right")
+    plt.show()
+
+def build_cfm(roc_prob, y_test, title):
+    # Builds a Confusion Matrix
+    # threshold in the binarize function can be adjusted to change classifications
+    # experimentation shows reducing threshold decreases FN rate but increases FP rate
+    # we can accept FP but not FN, so threshold is low
+    X_binary = binarize(roc_prob.reshape(-1,1), threshold=0.25)
+    C = confusion_matrix(y_test, X_binary)
+    show_confusion_matrix(C, title, ['Control', 'Parkinsons'])
+
+
+def show_confusion_matrix(C, title, class_labels=['0','1']):
     """
     C: ndarray, shape (2,2) as given by scikit-learn confusion_matrix function
     class_labels: list of strings, default simply labels 0 and 1.

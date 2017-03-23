@@ -2,22 +2,16 @@
 Creates and populates a table with accelerometer features generated
 by the six feature callers
 
--- NOTE: Drop the final column (error) because it is usually absent,
---       and absence makes imports error
+NOTE: Drop the final column (error) because it is usually absent,
+and absence makes imports error
 
-The template for the accelerometer data table below is generated from
-a TSV feature file using <python script name>
+Use python script process_tsv.py to remove the error field and rename
+fields to remove illegal characters prior to Postgres load
 
-Before import: edit the TSV file to be imported, replacing the header line with
-the edited version below, where the illegal characters have been removed
+Example usage:
+python /tremor/src/python/process_tsv.py TremorLapLeftFeatures.tsv o > output_tsv.tsv
 
-# unmodified file header
-deviceMotion_tremor_handInLap_right.json.items	recordId	appVersion	phoneInfo	uploadDate	healthCode	externalId	dataGroups	createdOn	createdOnTimeZone	userSharingScope	accel_tremor_handInLap_right.json.items	accel_tremor_handInLap_left.json.items	deviceMotion_tremor_handInLap_left.json.items	accel_tremor_handAtShoulderLength_right.json.items	deviceMotion_tremor_handAtShoulderLength_right.json.items	accel_tremor_handAtShoulderLength_left.json.items	deviceMotion_tremor_handAtShoulderLength_left.json.items	accel_tremor_handToNose_right.json.items	deviceMotion_tremor_handToNose_right.json.items	accel_tremor_handToNose_left.json.items	deviceMotion_tremor_handToNose_left.json.items	momentInDayFormat.json.choiceAnswers	medicationActivityTiming.json.choiceAnswers	skipHand.json.answer	idx	lap_right_file	medicationTime	momentInDay	meanX	sdX	modeX	skewX	kurX	q1X	medianX	q3X	iqrX	rangeX	acfX	zcrX	dfaX	cvX	tkeoX	F0X	P0X	F0FX	P0FX	medianF0FX	sdF0FX	tlagX	meanY	sdY	modeY	skewY	kurY	q1Y	medianY	q3Y	iqrY	rangeY	acfY	zcrY	dfaY	cvY	tkeoY	F0Y	P0Y	F0FY	P0FY	medianF0FY	sdF0FY	tlagY	meanZ	sdZ	modeZ	skewZ	kurZ	q1Z	medianZ	q3Z	iqrZ	rangeZ	acfZ	zcrZ	dfaZ	cvZ	tkeoZ	F0Z	P0Z	F0FZ	P0FZ	medianF0FZ	sdF0FZ	tlagZ	meanAA	sdAA	modeAA	skewAA	kurAA	q1AA	medianAA	q3AA	iqrAA	rangeAA	acfAA	zcrAA	dfaAA	cvAA	tkeoAA	F0AA	P0AA	F0FAA	P0FAA	medianF0FAA	sdF0FAA	tlagAA	meanAJ	sdAJ	modeAJ	skewAJ	kurAJ	q1AJ	medianAJ	q3AJ	iqrAJ	rangeAJ	acfAJ	zcrAJ	dfaAJ	cvAJ	tkeoAJ	F0AJ	P0AJ	F0FAJ	P0FAJ	medianF0FAJ	sdF0FAJ	tlagAJ	corXY	corXZ	corYZ	error
-
-# edited file header row (removing illegal chars for column names)
-# edit input TSV file to use this
-#
-deviceMotion_tremor_handInLap_right_json_items	recordId	appVersion	phoneInfo	uploadDate	healthCode	externalId	dataGroups	createdOn	createdOnTimeZone	userSharingScope	accel_tremor_handInLap_right_json_items	accel_tremor_handInLap_left_json_items	deviceMotion_tremor_handInLap_left_json_items	accel_tremor_handAtShoulderLength_right_json_items	deviceMotion_tremor_handAtShoulderLength_right_json_items	accel_tremor_handAtShoulderLength_left_json_items	deviceMotion_tremor_handAtShoulderLength_left_json_items	accel_tremor_handToNose_right_json_items	deviceMotion_tremor_handToNose_right_json_items	accel_tremor_handToNose_left_json_items	deviceMotion_tremor_handToNose_left_json_items	momentInDayFormat_json_choiceAnswers	medicationActivityTiming_json_choiceAnswers	skipHand_json_answer	idx	lap_right_file	medicationTime	momentInDay	meanX	sdX	modeX	skewX	kurX	q1X	medianX	q3X	iqrX	rangeX	acfX	zcrX	dfaX	cvX	tkeoX	F0X	P0X	F0FX	P0FX	medianF0FX	sdF0FX	tlagX	meanY	sdY	modeY	skewY	kurY	q1Y	medianY	q3Y	iqrY	rangeY	acfY	zcrY	dfaY	cvY	tkeoY	F0Y	P0Y	F0FY	P0FY	medianF0FY	sdF0FY	tlagY	meanZ	sdZ	modeZ	skewZ	kurZ	q1Z	medianZ	q3Z	iqrZ	rangeZ	acfZ	zcrZ	dfaZ	cvZ	tkeoZ	F0Z	P0Z	F0FZ	P0FZ	medianF0FZ	sdF0FZ	tlagZ	meanAA	sdAA	modeAA	skewAA	kurAA	q1AA	medianAA	q3AA	iqrAA	rangeAA	acfAA	zcrAA	dfaAA	cvAA	tkeoAA	F0AA	P0AA	F0FAA	P0FAA	medianF0FAA	sdF0FAA	tlagAA	meanAJ	sdAJ	modeAJ	skewAJ	kurAJ	q1AJ	medianAJ	q3AJ	iqrAJ	rangeAJ	acfAJ	zcrAJ	dfaAJ	cvAJ	tkeoAJ	F0AJ	P0AJ	F0FAJ	P0FAJ	medianF0FAJ	sdF0FAJ	tlagAJ	corXY	corXZ	corYZ	error
+NOTE: edit the final line of this file to use the correct file path on you system
 */
 
 DROP TABLE acc_1;
@@ -168,8 +162,23 @@ CREATE TABLE acc_1
    corYZ double precision
 );
 
--- populate with feature data
+-- make gesture-specific import tables
+DELETE FROM ACC_1;
+CREATE TABLE acc_TLL AS SELECT * FROM ACC_1;
+CREATE TABLE acc_TLR AS SELECT * FROM ACC_1;
+CREATE TABLE acc_TSL AS SELECT * FROM ACC_1;
+CREATE TABLE acc_TSR AS SELECT * FROM ACC_1;
+CREATE TABLE acc_TNL AS SELECT * FROM ACC_1;
+CREATE TABLE acc_TNR AS SELECT * FROM ACC_1;
+DROP TABLE ACC_1;
+
+-- import data from processed TSV files
 -- NOTE specifying HEADERS does *NOT* mean data items are ignored if
 -- they are under a column not to import - the job still errors.
--- use Python script <name here> to preprocess and strip the error field
-COPY acc_1 FROM '/Users/sjm/Git/DS/Week10/tdata/output_tsv.tsv' WITH (FORMAT CSV, DELIMITER E'\t', HEADER);
+-- use Python script process_tsv.py to preprocess and strip the error field
+COPY acc_TLL FROM '/Users/sjm/Git/DS/Week10/tdata/output_TLL.tsv' WITH (FORMAT CSV, DELIMITER E'\t', HEADER);
+COPY acc_TLR FROM '/Users/sjm/Git/DS/Week10/tdata/output_TLR.tsv' WITH (FORMAT CSV, DELIMITER E'\t', HEADER);
+COPY acc_TSL FROM '/Users/sjm/Git/DS/Week10/tdata/output_TSL.tsv' WITH (FORMAT CSV, DELIMITER E'\t', HEADER);
+COPY acc_TSR FROM '/Users/sjm/Git/DS/Week10/tdata/output_TSR.tsv' WITH (FORMAT CSV, DELIMITER E'\t', HEADER);
+COPY acc_TNL FROM '/Users/sjm/Git/DS/Week10/tdata/output_TNL.tsv' WITH (FORMAT CSV, DELIMITER E'\t', HEADER);
+COPY acc_TNR FROM '/Users/sjm/Git/DS/Week10/tdata/output_TNR.tsv' WITH (FORMAT CSV, DELIMITER E'\t', HEADER);

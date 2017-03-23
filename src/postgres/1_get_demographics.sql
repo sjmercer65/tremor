@@ -3,7 +3,7 @@
 CSV header row for demographics information from accelerometer repo
 EDITED to remove illegal chars (. and -)
 #
-Edit csv file and replace header row whith this row
+Edit csv file and replace header row with this row
 otherwise, illegal chars in the column names will cause errors
 #
 "recordId","appVersion","phoneInfo","uploadDate","healthCode","externalId","dataGroups","createdOn","createdOnTimeZone","userSharingScope","age","gender","race","Enter_State","education","employment","living_alone_status","are_caretaker","past_participation","smartphone","home_usage","medical_usage","medical_usage_yesterday","video_usage","smoked","years_smoking","packs_per_day","last_smoked","last_smoked_timezone","health_history"

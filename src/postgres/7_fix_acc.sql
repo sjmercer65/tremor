@@ -34,7 +34,7 @@ ALTER TABLE ACC_1 DROP COLUMN idx;
 -- CLEANING (not much needed since data is generated)
 
 -- there is nothing special about rangex, but successful feature
--- calling will give it a value; if it is null here, the record should be deleted
+-- calling will give it a value; if it is null here the record should be deleted
 DELETE FROM acc_1 WHERE rangex IS NULL;
 
 

@@ -1,6 +1,6 @@
 # Using Accelerometer Data to Detect Parkinson’s Disease: A Preliminary Study
 
-<i> Simon Mercer - Galvanize Data Science Student, March 2017</i>
+<i> Simon Mercer - Galvanize, Inc. Data Science Student, March 2017</i>
 
 ## Business Understanding
 Parkinson’s Disease is a progressive neurological disorder affecting at least one million Americans, with 60,000 new cases diagnosed in the US every year - and there are strong reasons to believe that the majority of Parkinson’s sufferers go undiagnosed. Nonetheless even at the current rate of diagnosis, Parkinson’s Disease is estimated to cost the US economy over 25 billion dollars annually. While Parkinson’s is not considered a terminal disease, it is incurable and progressive and so the identification of the most effective therapies for each patient would have an immediate effect on quality of life.
@@ -25,9 +25,9 @@ Sections of the code used in this project are the work of others and are acknowl
 </ul>
 
 ## Data Understanding
-In March 2015, Apple launched ResearchKit, a toolkit for the rapid construction of research-oriented mobile applications, and local Seattle non-profit Sage Bionetworks (http://sagebase.org/) used this technology to create a range of applications intended to further healthcare research through the widespread collection of healthcare data. One of the first was the Parkinson’s Study M-Power App (https://itunes.apple.com/us/app/parkinson-mpower-study-app/id972191200?mt=8) which tracks the health of patients through questionnaires and the collection of data using phone sensors and an optional wearable device.
+In March 2015, Apple launched ResearchKit, a toolkit for the rapid construction of research-oriented mobile applications, and local Seattle non-profit Sage Bionetworks (http://sagebase.org/) used this technology to create a range of applications intended to further healthcare research through the widespread collection of healthcare data. One of the first was the Parkinson’s Study m-Power App (https://itunes.apple.com/us/app/parkinson-mpower-study-app/id972191200?mt=8) which tracks the health of patients through questionnaires and the collection of data using phone sensors and an optional wearable device.
 
-These datasets are confidential medical data and are available for authorized research purposes only via the Synapse data portal (https://www.synapse.org/), with copious metadata and documentation available to registered users. Currently, three patient surveys are generally available along with four Activities - a set of Activity data comprises the output of a range of phone sensors while the patient conducts a specified set of tasks.
+These datasets are confidential medical data and are available for authorized research purposes only via the Synapse data portal (https://www.synapse.org/), with metadata and documentation available to registered users. Currently, three patient surveys are generally available along with four Activities - a set of Activity data comprises the output of a range of phone sensors while the patient conducts a specified set of tasks.
 
 The data collected to evaluate tremor are not a part of the currently released datasets and I am the only authorized user; my Statement of Use is included in the list of authorized projects here (https://www.synapse.org/#!Synapse:syn4993293/wiki/392026 - requires login); while I may share summarized data and results as a part of my project, I am not able to share underlying dataset. There are many references to the structure of the data in the source files especially with regard to data cleaning (see /src/postgres).
 
@@ -42,6 +42,9 @@ For feature extraction, I was able to rely on the mPower Tools toolkit (https://
 Unfortunately due to duplicated data and missing values, a total of 220 subjects remain in the cleaned dataset, 114 with a confirmed professional diagnosis of Parkinson’s Disease and 106 identified as Controls.
 
 A deliverable from this stage is sufficient information about the data to generate a page similar to that available for the walking Activity: https://www.synapse.org/#!Synapse:syn4993293/wiki/376006 (requires login).
+
+
+<center><strong>FOR FURTHER DETAILS, CODE AND GRAPHICS OF DATA MODELING AND EVALUATION PLEASE REFER TO THE JUPYTER NOTEBOOK 'Parkinsons.ipynb'</strong></center><br>
 
 
 ## Modeling

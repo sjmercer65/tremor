@@ -1,6 +1,6 @@
 # Using Accelerometer Data to Detect Parkinson’s Disease: A Preliminary Study
 
-### Simon Mercer - Galvanize Data Science Student, March 2017
+<i> Simon Mercer - Galvanize Data Science Student, March 2017</i>
 
 ## Business Understanding
 Parkinson’s Disease is a progressive neurological disorder affecting at least one million Americans, with 60,000 new cases diagnosed in the US every year - and there are strong reasons to believe that the majority of Parkinson’s sufferers go undiagnosed. Nonetheless even at the current rate of diagnosis, Parkinson’s Disease is estimated to cost the US economy over 25 billion dollars annually. While Parkinson’s is not considered a terminal disease, it is incurable and progressive and so the identification of the most effective therapies for each patient would have an immediate effect on quality of life.
@@ -9,28 +9,27 @@ Parkinson’s disease is characterized by three principal symptoms - Bradykinesi
 
 The focus of this project will be a detailed characterization of patient tremor through the extraction of a standard feature set, and an exploration of the extent to which tremor characteristics are related to, and predictive of, a diagnosis of Parkinson’s Disease. Further aims are to determine the extent to which a smartphone accelerometer is an effective tool for the collection of tremor data.
 
-# Acknowledgements:
+### Acknowledgements:
 <ul>
 <li>I have been assisted in my understanding of the data by copious documentation available through the Synapse mPower Portal, as well as through the kind assistance of Dr. Larsson Omberg, Chief Data Scientist at Sage Bionetworks.
 <li>I am also grateful to Dr. A. Wong, General Neurologist and Dr. J. Witt, head of the Movement Disorders clinic at Swedish Neurology Institute for their assistance in better understanding the clinical aspects of Parkinson’s Disease.
 </ul>
 
-Sections of the code used in this project are the work of others and are acknowledged in their respective files - they are:
-Standardized feature extraction code written in R (under /src/feature_extractors) is edited from an original script written by Abhishek Pratap and Elias Chaibub Neto of Sage Bionetworks.
-The Python code for display of an enhanced Confusion Matrix was written by Matt Hancock (http://notmatthancock.github.io/2015/10/28/confusion-matrix.html).
+Sections of the code used in this project are the work of others and are acknowledged in their respective files - they are: Standardized feature extraction code written in R (under /src/feature_extractors), edited from an original script written by Abhishek Pratap and Elias Chaibub Neto of Sage Bionetworks, and Python code for display of an enhanced Confusion Matrix written by Matt Hancock (http://notmatthancock.github.io/2015/10/28/confusion-matrix.html).
 
-# References:
-Parkinson’s Disease Foundation: Parkinson’s Statistics http://www.pdf.org/en/parkinson_statistics
-Cerebral causes and consequences of Parkinsonian resting tremor: a tale of two circuits? https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3501966/
-Parkinson's disease tremor: pathophysiology https://www.ncbi.nlm.nih.gov/pubmed/22166464
-
+### References:
+<ul>
+<li>Parkinson’s Disease Foundation: Parkinson’s Statistics  http://www.pdf.org/en/parkinson_statistics
+<li>Cerebral causes and consequences of Parkinsonian resting tremor: a tale of two circuits? https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3501966/
+<li>Parkinson's disease tremor: pathophysiology  https://www.ncbi.nlm.nih.gov/pubmed/22166464
+</ul>
 
 ## Data Understanding
 In March 2015, Apple launched ResearchKit, a toolkit for the rapid construction of research-oriented mobile applications, and local Seattle non-profit Sage Bionetworks (http://sagebase.org/) used this technology to create a range of applications intended to further healthcare research through the widespread collection of healthcare data. One of the first was the Parkinson’s Study M-Power App (https://itunes.apple.com/us/app/parkinson-mpower-study-app/id972191200?mt=8) which tracks the health of patients through questionnaires and the collection of data using phone sensors and an optional wearable device.
 
 These datasets are confidential medical data and are available for authorized research purposes only via the Synapse data portal (https://www.synapse.org/), with copious metadata and documentation available to registered users. Currently, three patient surveys are generally available along with four Activities - a set of Activity data comprises the output of a range of phone sensors while the patient conducts a specified set of tasks.
 
-The data collected to evaluate tremor are not a part of the currently released datasets and I am the only authorized user and my Statement of Use is included in the list of authorized projects here (https://www.synapse.org/#!Synapse:syn4993293/wiki/392026); while I may share summarized data and results as a part of my project, I am not able to share underlying dataset. There are many references to the structure of the data in the source files especially with regard to data cleaning (see /src/postgres).
+The data collected to evaluate tremor are not a part of the currently released datasets and I am the only authorized user and my Statement of Use is included in the list of authorized projects here (https://www.synapse.org/#!Synapse:syn4993293/wiki/392026 - requires login); while I may share summarized data and results as a part of my project, I am not able to share underlying dataset. There are many references to the structure of the data in the source files especially with regard to data cleaning (see /src/postgres).
 
 
 ## Preparation
@@ -54,8 +53,8 @@ In order to reduce dimensions and identify the best accelerometer features to us
 
 To investigate if accuracy could be further improved by combining models, I created all possible pairwise combinations of gestures and evaluated each model using 10-fold cross-validation at a range of steadily increasing regularization levels. In all cases, predictive accuracy declined slightly (reducing bias in the model) as regularization increased, but no combined model provided the accuracy of the best single-gesture models. The preferred approach going forward would be to average accuracies between all six gesture models, substantially reducing variance while retaining high accuracy.
 
-# Reference:
-Gupta, P and Dallas, T., (2014) “Feature Selection and Activity Recognition System Using a Single Triaxial Accelerometer”, IEEE Trans. Biomed. Eng. (61):6.
+### Reference:
+Gupta, P and Dallas, T., (2014) “Feature Selection and Activity Recognition System Using a Single Triaxial Accelerometer”, IEEE Trans. Biomed. Eng. (61):6. (abstract: http://ieeexplore.ieee.org/document/6780615/?reload=true - full article requires payment)
 
 
 ## Evaluation

@@ -48,6 +48,9 @@ A deliverable from this stage is sufficient information about the data to genera
 
 
 ## Modeling
+
+<center><strong>FOR FURTHER DETAILS, CODE AND GRAPHICS OF DATA MODELING AND EVALUATION PLEASE REFER TO THE JUPYTER NOTEBOOK 'Parkinsons.ipynb'</strong></center><br>
+
 The intent to classify patients using tremor characteristics requires the choice of a model which can clearly convey the contribution each factor makes to the final prediction so the statistical classification can be justified with reference to clinical observation. My initial approach is therefore logistic regression.
 
 The data are read into Python 2.7/Pandas 0.19.2 data frames where Parkinson/Control labels were binarized and other categorical fields separated into binary dummy columns in readiness for regularized linear regression and creating an entirely numeric feature set. Feature values were then standardized before being fitted to a logistic regression model containing a lasso regularization term.

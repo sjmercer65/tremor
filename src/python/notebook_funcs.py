@@ -270,7 +270,7 @@ def build_cfm(roc_prob, y_test):
     '''
     X_binary = binarize(roc_prob.reshape(-1,1), threshold=0.25)
     C = confusion_matrix(y_test, X_binary)
-    show_confusion_matrix(C, title, ['Control', 'Parkinsons'])
+    show_confusion_matrix(C, ['Control', 'Parkinsons'])
 
 
 def show_confusion_matrix(C, class_labels=['0','1']):

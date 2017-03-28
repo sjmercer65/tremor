@@ -20,12 +20,13 @@ example: python process_tsv.py foo.tsv o > ready_for_postgres.tsv
 import sys
 import numpy as np
 
+
 class filereader(object):
     def __init__(self):
         self.filename = sys.argv[1]
         self.option = sys.argv[2]
         self.has_header = True
-        self.max_fields = 142 # should cut off the optional and terminal error field
+        self.max_fields = 142  # should cut off terminal error field
         self.num_type = 'DOUBLE PRECISION'
         self.char_type = 'VARCHAR'
 
@@ -55,7 +56,8 @@ class filereader(object):
     def init_fields(self, n):
         '''
         takes an argument n=(maximum number of tab-delimited fields in file)
-        initializes 2d array of field metadata (is_numeric, length, processed_name)
+        initializes 2d array of field metadata
+          (is_numeric, length, processed_name)
         processed field names are added later
         '''
         field_list = []
@@ -97,8 +99,8 @@ class filereader(object):
         '''
         out = []
         for i, header in enumerate(header_list):
-            for ch in ['.','-']:
-                header = header.replace(ch,'_')
+            for ch in ['.', '-']:
+                header = header.replace(ch, '_')
             self.fields[i].append(header)
         return
 
@@ -123,7 +125,7 @@ class filereader(object):
                     self.init_header(flds)
                 else:
                     for i, field in enumerate(flds):
-                        if self.is_number(field) == False:
+                        if self.is_number(field) is False:
                             self.fields[i][0] = False
 
     def output_header(self):
@@ -133,7 +135,7 @@ class filereader(object):
         all field names have been processed to remove illegal chars
         '''
         arr = np.array(self.fields)
-        head_list = arr[:,2]
+        head_list = arr[:, 2]
         return '\t'.join(head_list[:self.max_fields])
 
     def output_file(self):
@@ -155,12 +157,13 @@ class filereader(object):
     def output_structure(self):
         '''
         takes no arguments - reads from self.fields
-        returns details of the table structure needed to store this file in PostgreSQL
+        returns details of the table structure needed to store
+        this file in PostgreSQL
         use this output to build the CREATE TABLE command
         '''
         struc = []
         for i, flist in enumerate(self.fields):
-            if flist[0] == True:
+            if flist[0] is True:
                 # numeric
                 data_type = self.num_type
             else:

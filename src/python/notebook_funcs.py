@@ -57,11 +57,12 @@ def add_features(df):
     of parameters. I will leave these in place so users may tweak
     the available feature set if desired.
     '''
-
+    '''
     # add dummy columns for demographic categories
-    #df = pd.concat([df, pd.get_dummies(df['gender'])], axis=1)
-    #df = pd.concat([df, pd.get_dummies(df['medicationtime'])], axis=1)
-    #df = pd.concat([df, pd.get_dummies(df['smartphone'])], axis=1)
+    df = pd.concat([df, pd.get_dummies(df['gender'])], axis=1)
+    df = pd.concat([df, pd.get_dummies(df['medicationtime'])], axis=1)
+    df = pd.concat([df, pd.get_dummies(df['smartphone'])], axis=1)
+    '''
 
     # drop columns we used to make the dummies
     df.drop('gender', axis=1, inplace=True)
@@ -72,13 +73,16 @@ def add_features(df):
     #df.drop('age', axis=1, inplace=True)
     df.drop('years_smoking', axis=1, inplace=True)
 
+    '''
     # drop one dummy column for the single subject with gender=unknown.
-    # we cant use it for prediction, becase 100% of 'unknowns' are in the same category...
-    #df.drop('Unknown', axis=1, inplace=True)
+    # we cant use it for prediction, becase 100% of 'unknowns' are
+    # in the same category...
+    df.drop('Unknown', axis=1, inplace=True)
 
     # drop medicationtime dummies related to NOT being medicated
-    #df.drop('No Tracked Medication', axis=1, inplace=True)
-    #df.drop('NA', axis=1, inplace=True)
+    df.drop('No Tracked Medication', axis=1, inplace=True)
+    df.drop('NA', axis=1, inplace=True)
+    '''
     return df
 
 
@@ -181,8 +185,8 @@ def search_features(lr_pipeline, x, y, n):
       lists of number of features and accuracy scores
     '''
     # initialize x and y lists with zeros so we have a point at the origin
-    x_list=[0]
-    y_list=[0]
+    x_list = [0]
+    y_list = [0]
     for k in range(1, n+1):
         sffs_score, feat_list = sff_selection(k, lr_pipeline, x, y, fwd=True, flt=True)
         x_list.append(k)
@@ -191,7 +195,7 @@ def search_features(lr_pipeline, x, y, n):
     return x_list, y_list
 
 
-def find_idx (mylist, threshold):
+def find_idx(mylist, threshold):
     '''
     Returns the index of the last element in mylist where
     mylist[i+1] is less than threshold bigger than mylist[i]
@@ -253,6 +257,7 @@ def roc_on(fpr, tpr, roc_auc, g_name):
     plt.legend(loc="lower right")
     plt.show()
 
+
 def build_cfm(roc_prob, y_test):
     '''
     Creates data for display in a Confusion matrix
@@ -268,12 +273,12 @@ def build_cfm(roc_prob, y_test):
     FN rate but increases FP rate - we can accept FP but not FN,
     so threshold is low
     '''
-    X_binary = binarize(roc_prob.reshape(-1,1), threshold=0.25)
+    X_binary = binarize(roc_prob.reshape(-1, 1), threshold=0.25)
     C = confusion_matrix(y_test, X_binary)
     show_confusion_matrix(C, ['Control', 'Parkinsons'])
 
 
-def show_confusion_matrix(C, class_labels=['0','1']):
+def show_confusion_matrix(C, class_labels=['0', '1']):
     """
     C: ndarray, shape (2,2) as given by scikit-learn confusion_matrix function
     class_labels: list of strings, default simply labels 0 and 1.
@@ -287,98 +292,100 @@ def show_confusion_matrix(C, class_labels=['0','1']):
     import matplotlib.pyplot as plt
     import numpy as np
 
-    assert C.shape == (2,2), "Confusion matrix should be from binary classification only."
+    assert C.shape == (2, 2), "Confusion matrix should be from binary classification only."
 
     # true negative, false positive, etc...
-    tn = C[0,0]; fp = C[0,1]; fn = C[1,0]; tp = C[1,1];
+    tn = C[0, 0]
+    fp = C[0, 1]
+    fn = C[1, 0]
+    tp = C[1, 1]
 
-    NP = fn+tp # Num positive examples
-    NN = tn+fp # Num negative examples
-    N  = NP+NN
+    NP = fn + tp  # Num positive examples
+    NN = tn + fp  # Num negative examples
+    N = NP + NN
 
-    fig = plt.figure(figsize=(8,8))
-    ax  = fig.add_subplot(111)
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.add_subplot(111)
     ax.imshow(C, interpolation='nearest', cmap=plt.cm.gray)
 
     # Draw the grid boxes
-    ax.set_xlim(-0.5,2.5)
-    ax.set_ylim(2.5,-0.5)
-    ax.plot([-0.5,2.5],[0.5,0.5], '-k', lw=2)
-    ax.plot([-0.5,2.5],[1.5,1.5], '-k', lw=2)
-    ax.plot([0.5,0.5],[-0.5,2.5], '-k', lw=2)
-    ax.plot([1.5,1.5],[-0.5,2.5], '-k', lw=2)
+    ax.set_xlim(-0.5, 2.5)
+    ax.set_ylim(2.5, -0.5)
+    ax.plot([-0.5, 2.5], [0.5, 0.5], '-k', lw=2)
+    ax.plot([-0.5, 2.5], [1.5, 1.5], '-k', lw=2)
+    ax.plot([0.5, 0.5], [-0.5, 2.5], '-k', lw=2)
+    ax.plot([1.5, 1.5], [-0.5, 2.5], '-k', lw=2)
 
     # Set xlabels
     ax.set_xlabel('Predicted Label', fontsize=16)
-    ax.set_xticks([0,1,2])
+    ax.set_xticks([0, 1, 2])
     ax.set_xticklabels(class_labels + [''])
     ax.xaxis.set_label_position('top')
     ax.xaxis.tick_top()
     # These coordinate might require some tinkering. Ditto for y, below.
-    ax.xaxis.set_label_coords(0.34,1.06)
+    ax.xaxis.set_label_coords(0.34, 1.06)
 
     # Set ylabels
     ax.set_ylabel('True Label', fontsize=16, rotation=90)
-    ax.set_yticklabels(class_labels + [''],rotation=90)
-    ax.set_yticks([0,1,2])
-    ax.yaxis.set_label_coords(-0.09,0.65)
-
+    ax.set_yticklabels(class_labels + [''], rotation=90)
+    ax.set_yticks([0, 1, 2])
+    ax.yaxis.set_label_coords(-0.09, 0.65)
 
     # Fill in initial metrics: tp, tn, etc...
-    ax.text(0,0,
-            'True Neg: %d\n(Num Neg: %d)'%(tn,NN),
+    ax.text(0, 0,
+            'True Neg: %d\n(Num Neg: %d)' % (tn, NN),
             va='center',
             ha='center',
-            bbox=dict(fc='w',boxstyle='round,pad=1'))
+            bbox=dict(fc='w', boxstyle='round,pad=1'))
 
-    ax.text(0,1,
-            'False Neg: %d'%fn,
+    ax.text(0, 1,
+            'False Neg: %d' % fn,
             va='center',
             ha='center',
-            bbox=dict(fc='w',boxstyle='round,pad=1'))
+            bbox=dict(fc='w', boxstyle='round,pad=1'))
 
-    ax.text(1,0,
-            'False Pos: %d'%fp,
+    ax.text(1, 0,
+            'False Pos: %d' % fp,
             va='center',
             ha='center',
-            bbox=dict(fc='w',boxstyle='round,pad=1'))
+            bbox=dict(fc='w', boxstyle='round,pad=1'))
 
-    ax.text(1,1,
-            'True Pos: %d\n(Num Pos: %d)'%(tp,NP),
+    ax.text(1, 1,
+            'True Pos: %d\n(Num Pos: %d)' % (tp, NP),
             va='center',
             ha='center',
-            bbox=dict(fc='w',boxstyle='round,pad=1'))
+            bbox=dict(fc='w', boxstyle='round,pad=1'))
 
     # Fill in secondary metrics: accuracy, true pos rate, etc...
-    ax.text(2,0,
-            'False Pos Rate: %.2f'%(fp / (fp+tn+0.)),
+    ax.text(2, 0,
+            'False Pos Rate: %.2f' % (fp / (fp+tn+0.)),
             va='center',
             ha='center',
-            bbox=dict(fc='w',boxstyle='round,pad=1'))
+            bbox=dict(fc='w', boxstyle='round,pad=1'))
 
-    ax.text(2,1,
-            'True Pos Rate: %.2f'%(tp / (tp+fn+0.)),
+    ax.text(2, 1,
+            'True Pos Rate: %.2f' % (tp / (tp+fn+0.)),
             va='center',
             ha='center',
-            bbox=dict(fc='w',boxstyle='round,pad=1'))
+            bbox=dict(fc='w', boxstyle='round,pad=1'))
 
-    ax.text(2,2,
-            'Accuracy: %.2f'%((tp+tn+0.)/N),
+    ax.text(2, 2,
+            'Accuracy: %.2f' % ((tp+tn+0.)/N),
             va='center',
             ha='center',
-            bbox=dict(fc='w',boxstyle='round,pad=1'))
+            bbox=dict(fc='w', boxstyle='round,pad=1'))
 
-    ax.text(0,2,
-            'Neg Pre Val: %.2f'%(1-fn/(fn+tn+0.)),
+    ax.text(0, 2,
+            'Neg Pre Val: %.2f' % (1-fn/(fn+tn+0.)),
             va='center',
             ha='center',
-            bbox=dict(fc='w',boxstyle='round,pad=1'))
+            bbox=dict(fc='w', boxstyle='round,pad=1'))
 
-    ax.text(1,2,
-            'Pos Pred Val: %.2f'%(tp/(tp+fp+0.)),
+    ax.text(1, 2,
+            'Pos Pred Val: %.2f' % (tp/(tp+fp+0.)),
             va='center',
             ha='center',
-            bbox=dict(fc='w',boxstyle='round,pad=1'))
+            bbox=dict(fc='w', boxstyle='round,pad=1'))
 
     plt.tight_layout()
     plt.show()
